@@ -1,0 +1,30 @@
+
+entryPoints: 
+  dashboard:
+    address: :8080
+  http:
+    address: :80
+  https:
+    address: :443
+
+certificatesResolvers:
+  http:
+    acme:
+      email: ${CERT_EMAIL}
+      storage: /acme.json
+      httpChallenge:
+        entryPoint: http
+
+
+providers:
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    exposedByDefault: false
+
+  file:
+    filename: /etc/traefik/dynamic_conf.yml
+    watch: true
+
+api:
+  dashboard: true
+  debug: true
