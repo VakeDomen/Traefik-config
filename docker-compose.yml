@@ -2,7 +2,7 @@ version: '3'
 
 services:
   traefik:
-    image: traefik:v2.0
+    image: traefik:v2.1
     container_name: traefik
     restart: unless-stopped
     security_opt:
@@ -14,8 +14,6 @@ services:
       - 80:80
       # https
       - 443:443
-      # dashboard
-      - 8080:8080
     volumes:
       # mount docker sock
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -26,21 +24,33 @@ services:
       # mound dynamic configuration
       - ./data/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml
       # mount acme.json for certificate storage
-      - ./data/acme.json:/acme.json
+      - ./data/acme.json:/etc/traefik/acme/acme.json
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.entrypoints=web,websecure"
       - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DOMAIN}`)"
+
+      # define auth and redirect middleware
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${CREDENTIALS}"
-      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`${TRAEFIK_DOMAIN}`)"
-      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=http"
-      - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=httpsRedirect"
+
+#      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+#      - "traefik.http.routers.traefik.entrypoints=https"
+#      - "traefik.http.routers.traefik-secure.rule=Host(`${TRAEFIK_DOMAIN}`)"
+
+      - traefik.http.routers.traefik.middlewares=traefik-auth
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=le
+      - traefik.http.routers.traefik.service=api@internal
+  
+      # global redirect to https  
+      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+      - traefik.http.routers.http-catchall.entrypoints=web
+      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+#      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+#      - "traefik.http.routers.http-catchall.middlewares=httpsRedirect"
+
 
 networks:
   proxy:

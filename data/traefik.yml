@@ -1,20 +1,17 @@
 
 entryPoints: 
-  dashboard:
-    address: :8080
-  http:
+  web:
     address: :80
-  https:
+  websecure:
     address: :443
 
 certificatesResolvers:
-  http:
+  le:
     acme:
-      email: ${CERT_EMAIL}
-      storage: /acme.json
-      httpChallenge:
-        entryPoint: http
+      storage: /etc/traefik/acme.json
 
+      httpChallenge:
+        entryPoint: web
 
 providers:
   docker:

@@ -1,4 +1,4 @@
-http:
+httpsRedirect:
   middlewares:
     https-redirect:
       redirectScheme:
