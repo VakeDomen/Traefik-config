@@ -1,2 +1,3 @@
 sites/*
 .env
+data/acme.json

@@ -33,12 +33,6 @@ services:
 
       # define auth and redirect middleware
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${CREDENTIALS}"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=httpsRedirect"
-
-#      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
-#      - "traefik.http.routers.traefik.entrypoints=https"
-#      - "traefik.http.routers.traefik-secure.rule=Host(`${TRAEFIK_DOMAIN}`)"
-
       - traefik.http.routers.traefik.middlewares=traefik-auth
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.tls.certresolver=le
@@ -47,10 +41,8 @@ services:
       # global redirect to https  
       - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
       - traefik.http.routers.http-catchall.entrypoints=web
-      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
-#      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-#      - "traefik.http.routers.http-catchall.middlewares=httpsRedirect"
-
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
 networks:
   proxy:

@@ -8,8 +8,8 @@ entryPoints:
 certificatesResolvers:
   le:
     acme:
-      storage: /etc/traefik/acme.json
-
+      storage: /etc/traefik/acme/acme.json
+#      tlsChallange: true
       httpChallenge:
         entryPoint: web
 
