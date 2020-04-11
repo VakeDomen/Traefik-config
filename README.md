@@ -2,6 +2,8 @@
 This is a Traefik configuration for personal dev server.
 Traefik is a open source reverse proxy / load balancer which is raising in popularity because of its ease to setup, integration with Docker and Let’s encrypt and much more features.
 
+[Full Traefik documentation](https://docs.traefik.io/v2.0/)
+
 ## Setup
 To setup the proxy server, clone the repository to `/etc/traefik/` in your file system. Then create a `acme.json` file to store the certificate data to `/etc/traefik/data/` and change the permissions
 ```
@@ -31,4 +33,12 @@ We can now run the container using the command below.
 ```
 docker-compose up -d
 ```
+Note: You may also need to create an external network named `proxy`.
 
+## Use
+The certificate resolver is generated under the name `le` and the entrypoints under `web` for http and `websecure` for https.
+To bind a docker-container to the traefik reverse proxy we are now able to use the `label` keyword in our docker-containers.
+
+Also for Traefik to be able to see the container, it should be bound to the `proxy` external network.
+
+You may check my basic working example [here](https://github.com/VakeDomen/Traefik-Whoami).
