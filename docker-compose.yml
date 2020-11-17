@@ -4,7 +4,7 @@ services:
   traefik:
     image: traefik:2.1
     container_name: traefik
-    restart: unless-stopped
+    restart: always
     security_opt:
       - no-new-privileges:true
     networks:
